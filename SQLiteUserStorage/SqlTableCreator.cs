@@ -8,15 +8,29 @@ namespace SQLiteUserStorage
 {
     internal static class SqlTableCreator
     {
+        private static string GetColumns(string[] columns)
+        {
+            string columnsText = string.Empty;
+            for(int num = 0; num < columns.Length; num++)
+            {
+                if(num == columns.Length -1)
+                {
+                    columnsText += columns[num];
+                }
+                else
+                {
+                    columnsText += $"{columns[num]}, ";
+                }
+            }
+            return columnsText;
+
+        }
+
         internal static string GetCommand(string tableName, string[] columns)
         {
             string createCommand = "CREATE TABLE";
-            string allColumns = string.Empty;
-            foreach (string column in columns)
-            {
-                allColumns += $"{column}, ";
-            }
-            return $"{createCommand} {tableName}({allColumns})";
+            string columnsText = GetColumns(columns);
+            return $"{createCommand} {tableName}({columnsText})";
         }
     }
 }
