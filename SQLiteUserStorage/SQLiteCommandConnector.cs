@@ -25,7 +25,7 @@ namespace SQLiteUserStorage
             try
             {
                 connection.Open();
-                string commandText = SqlTableCreator.GetCommand(tableName, columns);
+                string commandText = SqlCommandTextCreator.GetCreateTableCommand(tableName, columns);
                 SqliteCommand command = new SqliteCommand(commandText, connection);
                 command.ExecuteNonQuery();
             }
@@ -48,7 +48,7 @@ namespace SQLiteUserStorage
             try
             {
                 connection.Open();
-                string commandText = SqlTableCreator.GetCommand(tableName, columns);
+                string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, columnsAndValue);
                 SqliteCommand command = new SqliteCommand(commandText, connection);
                 command.ExecuteNonQuery();
             }
