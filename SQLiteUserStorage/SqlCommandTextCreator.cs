@@ -53,7 +53,6 @@ namespace SQLiteUserStorage
             string createCommand = "INSERT INTO";
             (string columns, string values) = GetColumnsAndValueText(columnsAndValue);
             return $"{createCommand} {tableName} ({columns}) VALUES ({values})";
-
         }
     }
 }

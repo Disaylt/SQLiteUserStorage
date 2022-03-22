@@ -19,36 +19,13 @@ namespace SQLiteUserStorage
                 _connectionPath = $"Data Source={value}.db";
             }
         }
-        public static void CrateTable(string tableName, params string[] columns)
-        {
-            using var connection = new SqliteConnection(_connectionPath);
-            try
-            {
-                connection.Open();
-                string commandText = SqlCommandTextCreator.GetCreateTableCommand(tableName, columns);
-                SqliteCommand command = new SqliteCommand(commandText, connection);
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                if(PushException != null)
-                {
-                    PushException.Invoke(ex);
-                }
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
 
-        public static void Insert(string tableName, Dictionary<string, string> columnsAndValue)
+        private static void ExcecuteCommand(string commandText)
         {
             using var connection = new SqliteConnection(_connectionPath);
             try
             {
                 connection.Open();
-                string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, columnsAndValue);
                 SqliteCommand command = new SqliteCommand(commandText, connection);
                 command.ExecuteNonQuery();
             }
@@ -64,5 +41,18 @@ namespace SQLiteUserStorage
                 connection.Close();
             }
         }
+
+        public static void CrateTable(string tableName, params string[] columns)
+        {
+            string commandText = SqlCommandTextCreator.GetCreateTableCommand(tableName, columns);
+            ExcecuteCommand(commandText);
+        }
+
+        public static void Insert(string tableName, Dictionary<string, string> columnsAndValue)
+        {
+            string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, columnsAndValue);
+            ExcecuteCommand(commandText);
+        }
+
     }
 }
