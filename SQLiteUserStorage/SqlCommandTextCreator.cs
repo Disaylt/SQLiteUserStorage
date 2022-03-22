@@ -54,5 +54,11 @@ namespace SQLiteUserStorage
             (string columns, string values) = GetColumnsAndValueText(columnsAndValue);
             return $"{createCommand} {tableName} ({columns}) VALUES ({values})";
         }
+
+        internal static string GetUpdateCommand(string table, string mutableAttribute, string whereAttribute)
+        {
+            string createCommand = "UPDATE";
+            return $"{createCommand} {table} SET {mutableAttribute} = @value WHERE {whereAttribute} = @whereValue";
+        }
     }
 }

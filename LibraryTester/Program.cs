@@ -1,7 +1,7 @@
 ﻿using SQLiteUserStorage;
 
-SQLiteCommandConnector.FileNameDB = "usersStorage";
-SQLiteCommandConnector.PushException += DispayError;
+SQLiteCommandExecuter.FileNameDB = "usersStorage";
+SQLiteCommandExecuter.PushException += DispayError;
 insert();
 
 void DispayError(Exception ex)
@@ -16,11 +16,11 @@ void insert()
         {"ChatId", "4618764" },
         {"UserName","'Vlad'" }
     };
-    SQLiteCommandConnector.Insert("Users", data);
+    SQLiteCommandExecuter.Insert("Users", data);
 }
 
 void createDb()
 {
     string[] columns = { "_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE", "ChatId INTEGER NOT NULL", "UserName TEXT NOT NULL" };
-    SQLiteCommandConnector.CrateTable("Users", columns);
+    SQLiteCommandExecuter.CrateTable("Users", columns);
 }
