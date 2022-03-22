@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SQliteCommandExecuter
+{
+    internal static class SqlCommandTextCreator
+    {
+        private static string TrimEndAttribute(string text, int attributeLenght)
+        {
+            text = text.TrimEnd();
+            text = text.Substring(0, text.Length - attributeLenght).Trim();
+            return text;
+        }
+
+        private static string GetColumnsText(string[] columnsName, string endAttribute, string key = "")
+        {
+            string columnsText = string.Empty;
+            foreach(string columnName in columnsName)
+            {
+                columnsText += $"{columnsName} = @{key}{columnsName}{endAttribute} ";
+            }
+            columnsText = TrimEndAttribute(columnsText, endAttribute.Length);
+            return columnsText;
+        }
+
+        private static (string columns, string values) GetColumnsAndValuesText(string[] columnsName)
+        {
+            string columns = string.Empty;
+            string values = string.Empty;
+            foreach (string columnName in columnsName)
+            {
+                columns += $"{columnName}, ";
+                values += $"@{columnName}, ";
+            }
+            columns = TrimEndAttribute(columns, 1);
+            values = TrimEndAttribute(values, 1);
+            return (columns, values);
+        }
+
+        internal static string GetCreateTableCommand(string tableName, string[] columns)
+        {
+            string createCommand = "CREATE TABLE";
+            string columnsText = GetColumnsText(columns, ",");
+            return $"{createCommand} {tableName}({columnsText})";
+        }
+
+        internal static string GetInsertCommand(string tableName, string[] columnsName)
+        {
+            string createCommand = "INSERT INTO";
+            (string columns, string values) = GetColumnsAndValuesText(columnsName);
+            return $"{createCommand} {tableName} ({columns}) VALUES ({values})";
+        }
+
+        internal static string GetUpdateCommand(string table, string[] columnsName, string[] whereColumnsName)
+        {
+            string createCommand = "UPDATE";
+            string columnsNameText = GetColumnsText(columnsName, " AND");
+            string wherecolumnsName = GetColumnsText(whereColumnsName, " AND", "Where");
+            return $"{createCommand} {table} SET {columnsNameText} WHERE {wherecolumnsName}";
+        }
+
+        internal static string GetDeleteCommand(string table, string columnName)
+        {
+            string createCommand = "DELETE FROM";
+            return $"{createCommand} {table} WHERE {columnName}=@value";
+        }
+    }
+}
