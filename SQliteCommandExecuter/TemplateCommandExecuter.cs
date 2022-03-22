@@ -12,6 +12,7 @@ namespace SQliteCommandExecuter
         private readonly string _connectionPath;
         public delegate void ExceptionPusher(Exception ex);
         public event ExceptionPusher? PushException;
+
         public TemplateCommandExecuter(string dbName)
         {
             _connectionPath = $"Data Source={dbName}.db";
@@ -20,14 +21,6 @@ namespace SQliteCommandExecuter
         public TemplateCommandExecuter(string dbName, ExceptionPusher exceptionPusher) : this(dbName)
         {
             PushException = exceptionPusher;
-        }
-
-        private static void AddParametrs(SqliteCommand command, Dictionary<string, object?> parameters)
-        {
-            foreach (var parameter in parameters)
-            {
-                command.Parameters.AddWithValue(parameter.Key, parameter.Value);
-            }
         }
 
         private void ExcecuteCommand(string commandText)
