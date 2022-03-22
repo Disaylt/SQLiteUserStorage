@@ -60,5 +60,11 @@ namespace SQLiteUserStorage
             string createCommand = "UPDATE";
             return $"{createCommand} {table} SET {mutableAttribute} = @value WHERE {whereAttribute} = @whereValue";
         }
+
+        internal static string GetDeleteCommand(string table, string columnName)
+        {
+            string createCommand = "DELETE FROM";
+            return $"{createCommand} {table} WHERE {columnName}=@value";
+        }
     }
 }

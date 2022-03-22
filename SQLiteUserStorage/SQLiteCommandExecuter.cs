@@ -39,10 +39,7 @@ namespace SQLiteUserStorage
             }
             catch (Exception ex)
             {
-                if (PushException != null)
-                {
-                    PushException.Invoke(ex);
-                }
+                PushException?.Invoke(ex);
             }
             finally
             {
@@ -62,10 +59,7 @@ namespace SQLiteUserStorage
             }
             catch (Exception ex)
             {
-                if (PushException != null)
-                {
-                    PushException.Invoke(ex);
-                }
+                PushException?.Invoke(ex);
             }
             finally
             {
@@ -94,6 +88,13 @@ namespace SQLiteUserStorage
                 {"@whereValue", dataForUpdate.WhereValue }
             };
             ExcecuteCommand(commandText, parameters);
+        }
+
+        public static int DeleteObjects(string tableName, string columnName, )
+
+        public static int DeleteObjects(string tableName, Dictionary<string, object> columnsNameAndValue )
+        {
+            return 1;
         }
     }
 }

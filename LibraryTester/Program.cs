@@ -1,8 +1,9 @@
 ﻿using SQLiteUserStorage;
 
 SQLiteCommandExecuter.FileNameDB = "usersStorage";
-SQLiteCommandExecuter.PushException += DispayError;
-insert();
+//SQLiteCommandExecuter.PushException += DispayError;
+//insert();
+SQLiteCommandExecuter.testc();
 
 void DispayError(Exception ex)
 {
