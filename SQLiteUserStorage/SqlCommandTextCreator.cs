@@ -10,9 +10,8 @@ namespace SQLiteUserStorage
     {
         private static string TrimEndComma(string textWithComma)
         {
-            string newText = textWithComma
-                .Trim()
-                .Substring(0, textWithComma.Length - 1);
+            string newText = textWithComma.Trim();
+            newText = newText.Substring(0, newText.Length - 1);
             return newText;
         }
 
@@ -35,7 +34,7 @@ namespace SQLiteUserStorage
             foreach (var data in columnsAndValue)
             {
                 columns += $"{data.Key}, ";
-                columns += $"{data.Value}, ";
+                values += $"{data.Value}, ";
             }
             columns = TrimEndComma(columns);
             values = TrimEndComma(values);
