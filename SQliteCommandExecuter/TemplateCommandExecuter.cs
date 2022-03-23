@@ -23,13 +23,13 @@ namespace SQliteCommandExecuter
             PushException = exceptionPusher;
         }
 
-        private void ExcecuteCommand(string commandText, List<SqlParameters<object>>? sqlParameters = null, ParametersWriter? parametersWriter = null)
+        private void ExecuteCommand(string commandText, List<SqlParameters<object>>? sqlParameters = null, ParametersWriter? parametersWriter = null)
         {
             using var connection = new SqliteConnection(_connectionPath);
             try
             {
                 connection.Open();
-                SqliteCommand command = new SqliteCommand(commandText, connection);
+                var command = new SqliteCommand(commandText, connection);
                 if(sqlParameters != null && parametersWriter != null)
                 {
                     parametersWriter.Invoke(command, sqlParameters);
@@ -49,7 +49,7 @@ namespace SQliteCommandExecuter
         public void CrateTable(string tableName, params string[] columns)
         {
             string commandText = SqlCommandTextCreator.GetCreateTableCommand(tableName, columns);
-            ExcecuteCommand(commandText);
+            ExecuteCommand(commandText);
         }
 
         public void Insert(string tableName, List<SqlParameters<object>> insertParameters)
@@ -58,7 +58,7 @@ namespace SQliteCommandExecuter
                 .Select(x => x.ColumnName)
                 .ToArray();
             string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, columnsName);
-            ExcecuteCommand(commandText, insertParameters, SqlParametersHandler.WriteParameters);
+            ExecuteCommand(commandText, insertParameters, SqlParametersHandler.WriteParameters);
         }
 
         public void Update(string tableName, List<SqlParameters<object>> updateParameters, List<SqlParameters<object>> whereParameters)
@@ -70,12 +70,14 @@ namespace SQliteCommandExecuter
                 .Select(x=> new SqlParameters<object>($"Where{x.ColumnName}", x.Value))
                 .Concat(updateParameters)
                 .ToList();
-            ExcecuteCommand(commandText, allParameters, SqlParametersHandler.WriteParameters);
+            ExecuteCommand(commandText, allParameters, SqlParametersHandler.WriteParameters);
         }
 
         public void Delete(string tableName, List<SqlParameters<object>> deleteParameters)
         {
-
+            string[] columnsName = deleteParameters.Select(x=> x.ColumnName).ToArray();
+            string coomandText = SqlCommandTextCreator.GetDeleteCommand(tableName, columnsName);
+            ExecuteCommand(coomandText, deleteParameters, SqlParametersHandler.WriteParameters);
         }
     }
 }

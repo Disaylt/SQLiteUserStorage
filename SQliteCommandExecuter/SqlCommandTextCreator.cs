@@ -11,7 +11,7 @@ namespace SQliteCommandExecuter
         private static string TrimEndAttribute(string text, int attributeLenght)
         {
             text = text.TrimEnd();
-            text = text.Substring(0, text.Length - attributeLenght).Trim();
+            text = text[0..^attributeLenght].Trim();
             return text;
         }
 
