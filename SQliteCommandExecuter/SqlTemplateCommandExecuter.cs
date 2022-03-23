@@ -54,20 +54,20 @@ namespace SQliteCommandExecuter
             }
         }
 
-        public void CrateTable(string tableName, params string[] columns)
+        public virtual void CrateTable(string tableName, params string[] columns)
         {
             string commandText = SqlCommandTextCreator.GetCreateTableCommand(tableName, columns);
             ExecuteCommand(commandText);
         }
 
-        public void Insert(string tableName, List<SqliteParameter> insertParameters)
+        public virtual void Insert(string tableName, List<SqliteParameter> insertParameters)
         {
             string[] parametersName = ReadParametersName(insertParameters);
             string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, parametersName);
             ExecuteCommand(commandText, insertParameters, SqlParametersHandler.WriteParameters);
         }
 
-        public void Update(string tableName, List<SqliteParameter> updateParameters, List<SqliteParameter> whereParameters)
+        public virtual void Update(string tableName, List<SqliteParameter> updateParameters, List<SqliteParameter> whereParameters)
         {
             string[] updateParametersName = ReadParametersName(updateParameters);
             string[] whereParametersName = ReadParametersName(whereParameters);
@@ -79,7 +79,7 @@ namespace SQliteCommandExecuter
             ExecuteCommand(commandText, allParameters, SqlParametersHandler.WriteParameters);
         }
 
-        public void Delete(string tableName, List<SqliteParameter> deleteParameters)
+        public virtual void Delete(string tableName, List<SqliteParameter> deleteParameters)
         {
             string[] parametersName = ReadParametersName(deleteParameters);
             string coomandText = SqlCommandTextCreator.GetDeleteCommand(tableName, parametersName);
