@@ -1,9 +1,14 @@
 ﻿using SQliteCommandExecuter;
+using Microsoft.Data.Sqlite;
 
 SqlTemplateCommandExecuter sqlTemplate = new SqlTemplateCommandExecuter("Test", DisplayError);
-List<SqlParameters<string>> sqlParameters = new List<SqlParameters<string>>();
-sqlParameters.Add(new SqlParameters<string>(""))
-sqlTemplate.Insert("Users", )
+List<SqliteParameter> sqlParameters = new List<SqliteParameter>();
+sqlParameters.Add(new SqliteParameter("UserName", "Sasha"));
+sqlParameters.Add(new SqliteParameter("ChatId", 12));
+List<SqliteParameter> sqlWhereParameters = new List<SqliteParameter>();
+sqlWhereParameters.Add(new SqliteParameter("_id", "1"));
+sqlWhereParameters.Add(new SqliteParameter("ChatId", "1234"));
+sqlTemplate.Update("Users", sqlParameters, sqlWhereParameters);
 
 
 void DisplayError(Exception ex)

@@ -18,12 +18,12 @@ namespace SQliteCommandExecuter
             return text;
         }
 
-        private static string GetColumnsText(string[] columnsName, string endAttribute, string key = "")
+        private static string GetColumnsText(string[] parametersName, string endAttribute, string key = "")
         {
             string columnsText = string.Empty;
-            foreach(string columnName in columnsName)
+            foreach(string parameterName in parametersName)
             {
-                columnsText += $"{columnsName} = @{key}{columnsName}{endAttribute} ";
+                columnsText += $"{parameterName} = @{key}{parameterName}{endAttribute} ";
             }
             columnsText = TrimEndAttribute(columnsText, endAttribute.Length);
             return columnsText;
@@ -60,7 +60,7 @@ namespace SQliteCommandExecuter
         internal static string GetUpdateCommand(string table, string[] parametersName, string[] whereColumnsName)
         {
             string command = "UPDATE";
-            string columnsNameText = GetColumnsText(parametersName, " AND");
+            string columnsNameText = GetColumnsText(parametersName, ",");
             string wherecolumnsName = GetColumnsText(whereColumnsName, " AND", "Where");
             return $"{command} {table} SET {columnsNameText} WHERE {wherecolumnsName}";
         }
