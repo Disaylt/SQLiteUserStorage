@@ -23,33 +23,17 @@ namespace SQliteCommandExecuter
             PushException = exceptionPusher;
         }
 
-        private void ExcecuteCommand(string commandText)
+        private void ExcecuteCommand(string commandText, List<SqlParameters<object>>? sqlParameters = null, ParametersWriter? parametersWriter = null)
         {
             using var connection = new SqliteConnection(_connectionPath);
             try
             {
                 connection.Open();
                 SqliteCommand command = new SqliteCommand(commandText, connection);
-                command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                PushException?.Invoke(ex);
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
-
-        private void ExcecuteCommand(string commandText, List<SqlParameters<object>> sqlParameters, ParametersWriter parametersWriter)
-        {
-            using var connection = new SqliteConnection(_connectionPath);
-            try
-            {
-                connection.Open();
-                SqliteCommand command = new SqliteCommand(commandText, connection);
-                parametersWriter.Invoke(command, sqlParameters);
+                if(sqlParameters != null && parametersWriter != null)
+                {
+                    parametersWriter.Invoke(command, sqlParameters);
+                }
                 command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -68,13 +52,13 @@ namespace SQliteCommandExecuter
             ExcecuteCommand(commandText);
         }
 
-        public void Insert(string tableName, List<SqlParameters<object>> parameters)
+        public void Insert(string tableName, List<SqlParameters<object>> insertParameters)
         {
-            string[] columnsName = parameters
+            string[] columnsName = insertParameters
                 .Select(x => x.ColumnName)
                 .ToArray();
             string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, columnsName);
-            ExcecuteCommand(commandText, parameters, SqlParametersHandler.WriteParameters);
+            ExcecuteCommand(commandText, insertParameters, SqlParametersHandler.WriteParameters);
         }
 
         public void Update(string tableName, List<SqlParameters<object>> updateParameters, List<SqlParameters<object>> whereParameters)
@@ -87,6 +71,11 @@ namespace SQliteCommandExecuter
                 .Concat(updateParameters)
                 .ToList();
             ExcecuteCommand(commandText, allParameters, SqlParametersHandler.WriteParameters);
+        }
+
+        public void Delete(string tableName, List<SqlParameters<object>> deleteParameters)
+        {
+
         }
     }
 }

@@ -42,30 +42,31 @@ namespace SQliteCommandExecuter
 
         internal static string GetCreateTableCommand(string tableName, string[] columns)
         {
-            string createCommand = "CREATE TABLE";
+            string command = "CREATE TABLE";
             string columnsText = GetColumnsText(columns, ",");
-            return $"{createCommand} {tableName}({columnsText})";
+            return $"{command} {tableName}({columnsText})";
         }
 
         internal static string GetInsertCommand(string tableName, string[] columnsName)
         {
-            string createCommand = "INSERT INTO";
+            string command = "INSERT INTO";
             (string columns, string values) = GetColumnsAndValuesText(columnsName);
-            return $"{createCommand} {tableName} ({columns}) VALUES ({values})";
+            return $"{command} {tableName} ({columns}) VALUES ({values})";
         }
 
         internal static string GetUpdateCommand(string table, string[] columnsName, string[] whereColumnsName)
         {
-            string createCommand = "UPDATE";
+            string command = "UPDATE";
             string columnsNameText = GetColumnsText(columnsName, " AND");
             string wherecolumnsName = GetColumnsText(whereColumnsName, " AND", "Where");
-            return $"{createCommand} {table} SET {columnsNameText} WHERE {wherecolumnsName}";
+            return $"{command} {table} SET {columnsNameText} WHERE {wherecolumnsName}";
         }
 
-        internal static string GetDeleteCommand(string table, string columnName)
+        internal static string GetDeleteCommand(string table, string[] columnsName)
         {
-            string createCommand = "DELETE FROM";
-            return $"{createCommand} {table} WHERE {columnName}=@value";
+            string command = "DELETE FROM";
+            string whereText = GetColumnsText(columnsName, " AND");
+            return $"{command} {table} WHERE {whereText}";
         }
     }
 }
