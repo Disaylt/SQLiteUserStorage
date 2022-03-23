@@ -11,7 +11,10 @@ namespace SQliteCommandExecuter
         private static string TrimEndAttribute(string text, int attributeLenght)
         {
             text = text.TrimEnd();
-            text = text[0..^attributeLenght].Trim();
+            if(text.Length > attributeLenght)
+            {
+                text = text[0..^attributeLenght].Trim();
+            }
             return text;
         }
 
@@ -26,46 +29,46 @@ namespace SQliteCommandExecuter
             return columnsText;
         }
 
-        private static (string columns, string values) GetColumnsAndValuesText(string[] columnsName)
+        private static (string Parameters, string Values) GetColumnsAndValuesText(string[] parametersName)
         {
-            string columns = string.Empty;
+            string parameters = string.Empty;
             string values = string.Empty;
-            foreach (string columnName in columnsName)
+            foreach (string parameterName in parametersName)
             {
-                columns += $"{columnName}, ";
-                values += $"@{columnName}, ";
+                parameters += $"{parameterName}, ";
+                values += $"@{parameterName}, ";
             }
-            columns = TrimEndAttribute(columns, 1);
+            parameters = TrimEndAttribute(parameters, 1);
             values = TrimEndAttribute(values, 1);
-            return (columns, values);
+            return (parameters, values);
         }
 
         internal static string GetCreateTableCommand(string tableName, string[] columns)
         {
             string command = "CREATE TABLE";
-            string columnsText = GetColumnsText(columns, ",");
+            string columnsText = GetColumnsAndValuesText(columns).Parameters;
             return $"{command} {tableName}({columnsText})";
         }
 
-        internal static string GetInsertCommand(string tableName, string[] columnsName)
+        internal static string GetInsertCommand(string tableName, string[] parametersName)
         {
             string command = "INSERT INTO";
-            (string columns, string values) = GetColumnsAndValuesText(columnsName);
+            (string columns, string values) = GetColumnsAndValuesText(parametersName);
             return $"{command} {tableName} ({columns}) VALUES ({values})";
         }
 
-        internal static string GetUpdateCommand(string table, string[] columnsName, string[] whereColumnsName)
+        internal static string GetUpdateCommand(string table, string[] parametersName, string[] whereColumnsName)
         {
             string command = "UPDATE";
-            string columnsNameText = GetColumnsText(columnsName, " AND");
+            string columnsNameText = GetColumnsText(parametersName, " AND");
             string wherecolumnsName = GetColumnsText(whereColumnsName, " AND", "Where");
             return $"{command} {table} SET {columnsNameText} WHERE {wherecolumnsName}";
         }
 
-        internal static string GetDeleteCommand(string table, string[] columnsName)
+        internal static string GetDeleteCommand(string table, string[] parametersName)
         {
             string command = "DELETE FROM";
-            string whereText = GetColumnsText(columnsName, " AND");
+            string whereText = GetColumnsText(parametersName, " AND");
             return $"{command} {table} WHERE {whereText}";
         }
     }

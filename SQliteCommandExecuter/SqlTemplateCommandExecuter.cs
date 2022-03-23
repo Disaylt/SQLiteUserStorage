@@ -7,23 +7,31 @@ using System.Threading.Tasks;
 
 namespace SQliteCommandExecuter
 {
-    public class TemplateCommandExecuter
+    public class SqlTemplateCommandExecuter
     {
         private readonly string _connectionPath;
         public delegate void ExceptionPusher(Exception ex);
         public event ExceptionPusher? PushException;
 
-        public TemplateCommandExecuter(string dbName)
+        public SqlTemplateCommandExecuter(string dbName)
         {
             _connectionPath = $"Data Source={dbName}.db";
         }
 
-        public TemplateCommandExecuter(string dbName, ExceptionPusher exceptionPusher) : this(dbName)
+        public SqlTemplateCommandExecuter(string dbName, ExceptionPusher exceptionPusher) : this(dbName)
         {
             PushException = exceptionPusher;
         }
 
-        private void ExecuteCommand(string commandText, List<SqlParameters<object>>? sqlParameters = null, ParametersWriter? parametersWriter = null)
+        private string[] ReadParametersName(List<SqliteParameter> parameters)
+        {
+            string[] parametrsName = parameters
+                .Select(x => x.ParameterName)
+                .ToArray();
+            return parametrsName;
+        }
+
+        private void ExecuteCommand(string commandText, List<SqliteParameter>? sqlParameters = null, ParametersWriter? parametersWriter = null)
         {
             using var connection = new SqliteConnection(_connectionPath);
             try
@@ -52,31 +60,29 @@ namespace SQliteCommandExecuter
             ExecuteCommand(commandText);
         }
 
-        public void Insert(string tableName, List<SqlParameters<object>> insertParameters)
+        public void Insert(string tableName, List<SqliteParameter> insertParameters)
         {
-            string[] columnsName = insertParameters
-                .Select(x => x.ColumnName)
-                .ToArray();
-            string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, columnsName);
+            string[] parametersName = ReadParametersName(insertParameters);
+            string commandText = SqlCommandTextCreator.GetInsertCommand(tableName, parametersName);
             ExecuteCommand(commandText, insertParameters, SqlParametersHandler.WriteParameters);
         }
 
-        public void Update(string tableName, List<SqlParameters<object>> updateParameters, List<SqlParameters<object>> whereParameters)
+        public void Update(string tableName, List<SqliteParameter> updateParameters, List<SqliteParameter> whereParameters)
         {
-            string[] columnsName = updateParameters.Select(x => x.ColumnName).ToArray();
-            string[] whereColumnsName = whereParameters.Select(x => x.ColumnName).ToArray();
-            string commandText = SqlCommandTextCreator.GetUpdateCommand(tableName, columnsName, whereColumnsName);
-            List<SqlParameters<object>> allParameters = whereParameters
-                .Select(x=> new SqlParameters<object>($"Where{x.ColumnName}", x.Value))
+            string[] updateParametersName = ReadParametersName(updateParameters);
+            string[] whereParametersName = ReadParametersName(whereParameters);
+            string commandText = SqlCommandTextCreator.GetUpdateCommand(tableName, updateParametersName, whereParametersName);
+            List<SqliteParameter> allParameters = whereParameters
+                .Select(x=> new SqliteParameter($"Where{x.ParameterName}", x.Value))
                 .Concat(updateParameters)
                 .ToList();
             ExecuteCommand(commandText, allParameters, SqlParametersHandler.WriteParameters);
         }
 
-        public void Delete(string tableName, List<SqlParameters<object>> deleteParameters)
+        public void Delete(string tableName, List<SqliteParameter> deleteParameters)
         {
-            string[] columnsName = deleteParameters.Select(x=> x.ColumnName).ToArray();
-            string coomandText = SqlCommandTextCreator.GetDeleteCommand(tableName, columnsName);
+            string[] parametersName = ReadParametersName(deleteParameters);
+            string coomandText = SqlCommandTextCreator.GetDeleteCommand(tableName, parametersName);
             ExecuteCommand(coomandText, deleteParameters, SqlParametersHandler.WriteParameters);
         }
     }

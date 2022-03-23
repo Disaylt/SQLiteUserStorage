@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace SQliteCommandExecuter
 {
-    internal delegate void ParametersWriter(SqliteCommand command, List<SqlParameters<object>> parameters);
+    internal delegate void ParametersWriter(SqliteCommand command, List<SqliteParameter> parameters);
     internal static class SqlParametersHandler
     {
-        internal static void WriteParameters(SqliteCommand command, List<SqlParameters<object>> parameters)
+        internal static void WriteParameters(SqliteCommand command, List<SqliteParameter> parameters)
         {
             foreach(var parameter in parameters)
             {
-                command.Parameters.AddWithValue($"@{parameter.ColumnName}", parameter.Value);
+                command.Parameters.AddWithValue($"@{parameter.ParameterName}", parameter.Value);
             }
         }
     }
