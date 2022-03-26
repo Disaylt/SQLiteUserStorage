@@ -71,5 +71,18 @@ namespace SQliteCommandExecuter
             string whereText = GetColumnsText(parametersName, " AND");
             return $"{command} {table} WHERE {whereText}";
         }
+
+        public static string GetSelectCommand(string tableName)
+        {
+            string command = "SELECT";
+            return $"{command} * FROM {tableName}";
+        }
+
+        public static string GetSelectCommand(string tableName, string[] whereParametersName)
+        {
+            string whereText = GetColumnsText(whereParametersName, " AND");
+            string command = GetSelectCommand(tableName);
+            return $"{command} WHERE {whereText}";
+        }
     }
 }
